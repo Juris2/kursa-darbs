@@ -5,6 +5,7 @@
         <link rel="stylesheet" href="./libs/boostrap/css/bootstrap.min.css">
         <link rel="stylesheet" type="text/css" href="./papildus/style.css">      
         <link href="libs/css/half-slider.css" rel="stylesheet">
+        
 
         <link rel="SHORTCUT ICON" href="./papildus/favicon.ico"/>
 

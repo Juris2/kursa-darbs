@@ -35,6 +35,7 @@ else {
 
 
 echo "<script>alert('Epasts un/vai parole nav pareiza, mēģiniet vēlreiz!')</script>";
+header("location: index.php");
 }
 
 }

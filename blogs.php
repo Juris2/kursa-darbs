@@ -45,23 +45,22 @@ if(isset($_POST['addcomment'])){
 
 
     if(isset($_GET['delcomment'])){
+            $delete="DELETE FROM komentari WHERE ID={$_GET['delcomment']} LIMIT 1";
+
+         mysqli_query($conn, $delete);
+    };
+
     
-    $del = "DELETE FROM komentari WHERE ID = {$_GET['delcomment']} ";
+//     if(isset($_GET['editcomment'])){
+//            $delete="UPDATE komentari SET nosaukums='$nosaukums', teksts='$teksts' WHERE ID={$_GET['editcomment']} LIMIT 1";
+//
+//         mysqli_query($conn, $delete);
+//    };
 
-       unset($kom); 
-            $conn->query($del);
-            $conn->close();
 
- 
 
-       header("Refresh:0");   
 
-          
-        }
-
-    $komentars = "SELECT * FROM komentari Where lietotajs = '$lietot_id' ORDER by ID DESC";
-    mysqli_query($conn, $komentars);
-    $jee = mysqli_query($conn, $komentars);
+   
  
 
 
@@ -96,8 +95,11 @@ if(isset($_POST['addcomment'])){
    </div>
   </li>
 
-<?php while ($kom = mysqli_fetch_assoc($jee)){ echo ' 
-    <li '?><?php if ($kom['ID']%2==0) echo 'class="timeline-inverted"'; else echo 'class="timeline"';?><?php echo ' name="' . $kom['ID'] . '">
+<?php 
+ $komentars = "SELECT * FROM komentari Where lietotajs = '$lietot_id' ORDER by ID DESC";
+    $jee = mysqli_query($conn, $komentars);
+while ($kom = mysqli_fetch_assoc($jee)){ $ID = $kom['ID']; echo ' 
+    <li '?><?php if ($kom['ID']%2==0) echo 'class="timeline-inverted"'; else echo 'class="timeline"';?><?php echo ' ID="' . $kom['ID'] . '">
       <div class="timeline-badge success"><i class="glyphicon glyphicon-thumbs-up" id="glyphicon"></i></div>
       <div class="timeline-panel">
       <form method="GET" action="blogs.php">
@@ -108,8 +110,8 @@ if(isset($_POST['addcomment'])){
           <p>' . $kom['teksts'] . '</p>
         </div>
         <span class="pull-right">
-                            <button type="submit" class="btn btn-sm btn-warning" name="editcomment"><i class="glyphicon glyphicon-edit"></i>
-                            <button type="submit" class="btn btn-sm btn-danger" name="delcomment"><i class="glyphicon glyphicon-remove"></i></a>
+                            <button type="button" class="btn btn-sm btn-warning"  data-toggle="modal" data-target="#myModal"><i class="glyphicon glyphicon-edit"></i></button>
+                            <a href="blogs.php?delcomment=' . $ID . '" data-original-title="Remove this user" data-toggle="tooltip" type="button" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-remove"></i></a>
         </span>
         </form>
       </div>
@@ -118,4 +120,38 @@ if(isset($_POST['addcomment'])){
     '; } ?>
 
   </ul>
+</div>
+
+
+
+
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Labot komentāru:</h4>
+      </div>
+      <form method="POST" action="blogs.php">
+      <div class="modal-body">
+      <div class="form-group">
+    <label for="comment">Virsraksts:</label>
+    <input type="text" class="form-control"  name="editvirsraksts" value="<?php echo $kom['nosaukums']?>"></textarea>
+   </div>
+   <div class="form-group">
+    <label for="comment">Teksts:</label>
+    <textarea class="form-control" rows="5"  name="editteksts" value="<?php echo $kom['teksts']?>"></textarea>
+   </div>
+   </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Aizvērt</button>
+        <button type="submit" class="btn btn-primary" name="editcomment" ><?php echo '<a href="blogs.php?editcomment=' . $ID . '" data-original-title="EDIT" data-toggle="tooltip" type="button" class="btn btn-sm btn-danger">Labot</a> ';?></button>
+        
+      </div>
+    </div>
+    </form>
+
+  </div>
 </div>

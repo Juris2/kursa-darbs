@@ -1,16 +1,15 @@
 <?php
 
 
+
+
+// Create connection
 $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "kursa_darbs";
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die("ERROR:could not connect to the database!!!");
-} 
+$conn = mysqli_connect($servername, $username, $password, $dbname);
 
 	if(isset($_POST['submit'])){
 		$vards = $_POST['firstname'];
@@ -24,15 +23,34 @@ if ($conn->connect_error) {
 		$parole = md5($parole);
 
 
-		$sql = "INSERT INTO lietotaji (ID, vards, uzvards, epasts, parole, dzimsanas_datums, valsts, dzimums) VALUES (NULL, '$vards', '$uzvards', '$epasts', '$parole', '$dzimsanas_datums', '$valsts', '$dzimums')";
+		$sql = "INSERT INTO lietotaji (ID, vards, uzvards, epasts, parole, dzimsanas_datums, valsts, dzimums, telefons, bilde) VALUES (NULL, '$vards', '$uzvards', '$epasts', '$parole', '$dzimsanas_datums', '$valsts', '$dzimums', '', '')";
 
-        if (isset($_POST['rules'])) {
+
+          $sel_user = "select ID from lietotaji where epasts='$epasts' AND parole='$parole'";
+
+        $run_user = mysqli_query($conn, $sel_user);
+
+        $check_user = mysqli_num_rows($run_user);
+
+        if($check_user<=0){
+
             $conn->query($sql);
             $conn->close();
-        } else {
-            
-          
+            header("Location:index.php");
+            session_start();
+
+            $_SESSION['username']= $epasts;
         }
+
+else {
+
+
+echo "<script>alert('Epasts jau tiek izmantots, mēģini ar citu!')</script>";
+}
+
+
+
+ 
 
   
 	}
@@ -58,31 +76,31 @@ if ($conn->connect_error) {
                 <div class="form-group">
                     <label for="firstName" class="col-sm-3 control-label">Vārds</label>
                     <div class="col-sm-9">
-                        <input type="text" id="firstName" placeholder="Vārds" class="form-control" name="firstname" autofocus>                 
+                        <input type="text" id="firstName" placeholder="Vārds" class="form-control" name="firstname" autofocus required="yes">                 
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="lastName" class="col-sm-3 control-label">Uzvārds</label>
                     <div class="col-sm-9">
-                        <input type="text" id="lastName" placeholder="Uzvārds" class="form-control" name="lastname" autofocus>                      
+                        <input type="text" id="lastName" placeholder="Uzvārds" class="form-control" name="lastname" autofocus required="yes">                      
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="email" class="col-sm-3 control-label">E-pasts</label>
                     <div class="col-sm-9">
-                        <input type="email" id="email" placeholder="Email" class="form-control" name="email">
+                        <input type="email" id="email" placeholder="Email" class="form-control" name="email" required="yes">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="password" class="col-sm-3 control-label">Parole</label>
                     <div class="col-sm-9">
-                        <input type="password" id="password" placeholder="Password" class="form-control" name="password">
+                        <input type="password" id="password" placeholder="Password" class="form-control" name="password" required="yes">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="birthDate" class="col-sm-3 control-label">Dzimšanas datums</label>
                     <div class="col-sm-9">
-                        <input type="date" id="birthDate" class="form-control" name="birthDate">
+                        <input type="date" id="birthDate" class="form-control" name="birthDate" required="yes">
                     </div>
                 </div>
                 <div class="form-group">
@@ -122,7 +140,7 @@ if ($conn->connect_error) {
                     <div class="col-sm-9 col-sm-offset-3">
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox" name="rules">Es piekrītu <a href="#">noteikumiem </a>
+                                <input type="checkbox" name="rules" required="yes">Es piekrītu <a href="#">noteikumiem </a>
                             </label>
                         </div>
 
@@ -130,17 +148,7 @@ if ($conn->connect_error) {
                     
                 </div> <!-- /.form-group -->
 
-                <div class="form-group">
-                    <div class="col-sm-12 col-sm-offset-3">
-                        
-                            <label>
-                                <div class="alert alert-danger" role="alert" style="" id="err_log">Pārbaudi vai visi lauki ir aizpildīti!.......</div>
-                            </label>
-                       
-
-                    </div>
-                    
-                </div> <!-- /.form-group -->
+            
                 
                 <div class="form-group">
                     <div class="col-sm-9 col-sm-offset-3">
